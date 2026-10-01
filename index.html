@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TripMate: Tourist Destination Recommendation Task</title>
+<style>
+:root{--bg:#fff;--fg:#1a2332;--mut:#5b6678;--card:#f3f6fa;--acc:#0e7490;--code:#0f172a;--cf:#e2e8f0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1220;--fg:#e5e9f0;--mut:#9aa6b8;--card:#141d2e;--acc:#22d3ee}}
+:root[data-theme="dark"]{--bg:#0b1220;--fg:#e5e9f0;--mut:#9aa6b8;--card:#141d2e;--acc:#22d3ee}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,"Segoe UI",Arial,sans-serif}
+main{max-width:880px;margin:auto;padding:16px}
+h1{font-size:2rem;color:var(--acc);margin:.4em 0}h2{margin-top:2.2em;border-bottom:2px solid var(--acc);padding-bottom:4px}h3{margin-top:1.5em}
+a{color:var(--acc)}.card{background:var(--card);border-radius:10px;padding:12px 16px;margin:12px 0}
+.push{border-left:4px solid var(--acc)}.warn{border-left:4px solid #d97706}
+pre{background:var(--code);color:var(--cf);padding:12px;border-radius:8px;overflow-x:auto;font-size:13px;position:relative}
+pre button{position:absolute;top:6px;right:6px;font-size:11px;cursor:pointer}
+table{border-collapse:collapse;display:block;overflow-x:auto}td,th{border:1px solid var(--mut);padding:5px 9px;text-align:left}
+code{background:var(--card);padding:1px 5px;border-radius:4px}pre code{background:none;padding:0}
+</style></head><body><main>
+<p style="color:var(--mut)">Database Management Systems · Compulsory Weekend Task</p>
+<h1>Build TripMate, a tourist destination recommendation system</h1>
+<p>You will design a PostgreSQL database on Supabase, build a website that recommends destinations by interest, budget and season (ranked by traveller ratings), and deploy it live on GitHub Pages. Complete every phase in order and push at every checkpoint (8 in total). <b>No push, no marks.</b></p>
+<div class="card"><b>Stack:</b> Supabase (PostgreSQL) · HTML, CSS, JavaScript (no frameworks) · GitHub + GitHub Pages. <b>Time:</b> about 7 hours over a weekend.</div>
+
+<h2>Rules</h2>
+<ul><li>Own Supabase project and own public repo named <code>tourism-&lt;regno&gt;</code>.</li>
+<li>8 separate checkpoint commits must appear in the repo history.</li>
+<li>The live link must load data from <b>your</b> Supabase project; the footer shows your name, register number and college.</li>
+<li>Copied repos (same data, no personalisation) get zero.</li></ul>
+
+<h2>Phase 0 · Accounts, tools and repo</h2>
+<h3>0.1 GitHub account</h3>
+<p>Open <a href="https://github.com/signup">github.com/signup</a>, use your college email and a professional username, then verify the email.</p>
+<h3>0.2 Supabase account</h3>
+<p>Open <a href="https://supabase.com/dashboard/sign-in">supabase.com</a> → <b>Continue with GitHub</b> → authorise.</p>
+<h3>0.3 Install VS Code</h3>
+<p>Download from <a href="https://code.visualstudio.com/download">code.visualstudio.com/download</a>. On Windows tick <b>Add "Open with Code"</b> and <b>Add to PATH</b>. Then open the Extensions icon, search <b>Live Server</b> (Ritwick Dey) and install it.</p>
+<h3>0.4 Install Git</h3>
+<p><b>Windows:</b> <a href="https://git-scm.com/downloads/win">git-scm.com/downloads/win</a>. Click Next everywhere, but choose VS Code as default editor and set the initial branch name to <code>main</code>. <b>Mac:</b> open Terminal, run <code>git --version</code> and accept the Command Line Tools install. <b>Restart VS Code afterwards.</b></p>
+<h3>0.5 Tell Git who you are</h3>
+<p>In VS Code: <b>Terminal → New Terminal</b>, then run (use your GitHub email):</p>
+<pre>git --version
+git config --global user.name "Your Full Name"
+git config --global user.email "your-github-email@example.com"
+git config --global init.defaultBranch main</pre>
+<p>Click the <b>Accounts</b> icon (bottom-left) → <b>Sign in with GitHub</b>.</p>
+<h3>0.6 Create the repo</h3>
+<p>GitHub → <b>+ → New repository</b>. Name: <code>tourism-24cs045</code> (your reg no, lowercase). Visibility <b>Public</b>. Tick <b>Add a README file</b>. Click Create, then <b>Code → HTTPS</b> and copy the URL.</p>
+<h3>0.7 Clone and open it</h3>
+<pre>cd ~/Documents
+git clone https://github.com/YOUR-USERNAME/tourism-YOUR-REGNO.git</pre>
+<p>VS Code: <b>File → Open Folder</b> → select the cloned folder → Trust. Open a new terminal and run <code>git status</code>; it must say <code>On branch main</code>. All work stays inside this folder.</p>
+<h3>0.8 Creating files</h3>
+<p>Explorer → New File icon. Typing <code>database/01_tables.sql</code> creates the folder too. Save with Ctrl+S (a ● on the tab means unsaved; Git cannot see it).</p>
+<pre>tourism-&lt;regno&gt;/
+├── README.md  index.html  style.css  config.js  app.js
+├── database/ 01_tables.sql 02_seed.sql 03_security.sql 04_view.sql 05_queries.sql 06_personalisation.sql
+└── screenshots/</pre>
+<h3>0.9 The push routine</h3>
+<pre>git add .
+git commit -m "Phase X: message"
+git push</pre>
+<p>The first push asks you to authorise GitHub in the browser. <code>git log --oneline</code> lists commits.</p>
+<div class="card push"><b>PUSH 1.</b> Create empty <code>screenshots/.gitkeep</code>, then run the routine with message <code>Phase 0: repo setup</code>.</div>
+
+<h2>Phase 1 · Supabase project</h2>
+<p>Dashboard → <b>New project</b> (create an organisation on the Free plan if asked). Name <code>tourism-&lt;regno&gt;</code>, <b>Generate a password</b> and save it in a notepad, region Mumbai/South Asia. Wait 1 to 2 minutes until it is healthy.</p>
+<div class="card warn">Free projects pause after about a week idle. Click <b>Restore project</b> if the site stops working, and open the dashboard the day before evaluation.</div>
+
+<h2>Phase 2 · Design</h2>
+<p>Three tables, two foreign keys: one category has many destinations, one destination has many reviews.</p>
+<table><tr><th>Table</th><th>Stores</th></tr><tr><td>categories</td><td>Interest types: Beach, Hill Station, Heritage, Adventure, Spiritual, Wildlife</td></tr><tr><td>destinations</td><td>Place, state, category, budget level, best season, ideal days, description, image</td></tr><tr><td>reviews</td><td>Traveller name, rating 1 to 5, comment per destination</td></tr></table>
+<p><b>How recommendation works:</b> the user picks interest, budget and season. The database filters matching destinations and ranks them by average rating, then by number of reviews. Draw the ER diagram in your record; you will add a column in Phase 12.</p>
+
+<h2>Phase 3 · Create tables (DDL)</h2>
+<p>Supabase → <b>SQL Editor → New query</b>, paste and Run.</p>
+<pre>-- database/01_tables.sql
+create table categories (
+  id   bigint generated always as identity primary key,
+  name text not null unique
+);
+create table destinations (
+  id          bigint generated always as identity primary key,
+  name        text not null,
+  state       text not null,
+  category_id bigint references categories(id) on delete set null,
+  budget      text not null check (budget in ('Low','Medium','High')),
+  best_season text not null check (best_season in ('Winter','Summer','Monsoon')),
+  ideal_days  int  check (ideal_days > 0),
+  description text,
+  image_url   text,
+  created_at  timestamptz default now()
+);
+create table reviews (
+  id             bigint generated always as identity primary key,
+  destination_id bigint not null references destinations(id) on delete cascade,
+  reviewer_name  text not null,
+  rating         int  not null check (rating between 1 and 5),
+  comment        text,
+  created_at     timestamptz default now()
+);</pre>
+<p>Expect "Success. No rows returned" and three tables in Table Editor. <code>on delete cascade</code> removes a destination's reviews with it; <code>on delete set null</code> keeps destinations when a category is deleted.</p>
+<div class="card push"><b>PUSH 2.</b> Save as <code>database/01_tables.sql</code>; commit <code>Phase 3: create tables</code>.</div>
+
+<h2>Phase 4 · Sample data (DML)</h2>
+<p>Run once only.</p>
+<pre>-- database/02_seed.sql
+insert into categories (name) values
+ ('Beach'),('Hill Station'),('Heritage'),('Adventure'),('Spiritual'),('Wildlife');
+
+insert into destinations (name,state,category_id,budget,best_season,ideal_days,description,image_url) values
+ ('Munnar','Kerala',(select id from categories where name='Hill Station'),'Medium','Monsoon',3,'Tea gardens and misty hills in the Western Ghats.','https://placehold.co/400x260/166534/fff?text=Munnar'),
+ ('Alleppey Backwaters','Kerala',(select id from categories where name='Beach'),'Medium','Winter',2,'Houseboat cruises through palm-fringed canals.','https://placehold.co/400x260/0e7490/fff?text=Alleppey'),
+ ('Goa Beaches','Goa',(select id from categories where name='Beach'),'Medium','Winter',4,'Sandy beaches, shacks and Portuguese heritage.','https://placehold.co/400x260/0369a1/fff?text=Goa'),
+ ('Jaipur','Rajasthan',(select id from categories where name='Heritage'),'Low','Winter',3,'The Pink City of forts and palaces.','https://placehold.co/400x260/9d174d/fff?text=Jaipur'),
+ ('Hampi','Karnataka',(select id from categories where name='Heritage'),'Low','Winter',2,'Ruins of the Vijayanagara empire.','https://placehold.co/400x260/92400e/fff?text=Hampi'),
+ ('Leh Ladakh','Ladakh',(select id from categories where name='Adventure'),'High','Summer',7,'High passes, monasteries and mountain lakes.','https://placehold.co/400x260/1e3a8a/fff?text=Ladakh'),
+ ('Rishikesh','Uttarakhand',(select id from categories where name='Adventure'),'Low','Summer',3,'River rafting and yoga on the Ganga.','https://placehold.co/400x260/047857/fff?text=Rishikesh'),
+ ('Varanasi','Uttar Pradesh',(select id from categories where name='Spiritual'),'Low','Winter',2,'Ghats, temples and the evening Ganga aarti.','https://placehold.co/400x260/7c2d12/fff?text=Varanasi'),
+ ('Periyar','Kerala',(select id from categories where name='Wildlife'),'Medium','Winter',2,'Boat safaris to see elephants and birds.','https://placehold.co/400x260/365314/fff?text=Periyar'),
+ ('Andaman Islands','Andaman',(select id from categories where name='Beach'),'High','Winter',6,'Clear water, coral reefs and scuba diving.','https://placehold.co/400x260/155e75/fff?text=Andaman');
+
+insert into reviews (destination_id,reviewer_name,rating,comment) values
+ ((select id from destinations where name='Munnar'),'Anjali',5,'Magical in the rains.'),
+ ((select id from destinations where name='Munnar'),'Arjun',4,'Crowded on weekends.'),
+ ((select id from destinations where name='Goa Beaches'),'Sreya',4,'Great food and beaches.'),
+ ((select id from destinations where name='Jaipur'),'Akhil',5,'Forts are stunning.'),
+ ((select id from destinations where name='Leh Ladakh'),'Fathima',5,'Trip of a lifetime.'),
+ ((select id from destinations where name='Andaman Islands'),'Nikhil',5,'Best snorkelling.'),
+ ((select id from destinations where name='Rishikesh'),'Arjun',4,'Rafting was thrilling.');</pre>
+<p>Check: 6 categories, 10 destinations, 7 reviews.</p>
+<div class="card push"><b>PUSH 3.</b> Save as <code>database/02_seed.sql</code>; commit <code>Phase 4: sample data</code>.</div>
+
+<h2>Phase 5 · Security (RLS and grants)</h2>
+<p>The browser uses a public key, so Row Level Security decides what is allowed: everyone can read, everyone can add a valid review, nobody can update or delete.</p>
+<pre>-- database/03_security.sql
+alter table categories   enable row level security;
+alter table destinations enable row level security;
+alter table reviews      enable row level security;
+
+create policy "read categories"   on categories   for select to anon, authenticated using (true);
+create policy "read destinations" on destinations for select to anon, authenticated using (true);
+create policy "read reviews"      on reviews      for select to anon, authenticated using (true);
+create policy "add reviews" on reviews for insert to anon, authenticated
+  with check (rating between 1 and 5
+    and length(trim(reviewer_name)) between 1 and 50
+    and length(coalesce(comment,'')) <= 500);
+
+grant usage  on schema public to anon, authenticated;
+grant select on categories, destinations, reviews to anon, authenticated;
+grant insert on reviews to anon, authenticated;</pre>
+<p>Check <b>Authentication → Policies</b> shows 4 policies. Never disable RLS; re-run the script if data is missing.</p>
+<div class="card push"><b>PUSH 4.</b> Save as <code>database/03_security.sql</code> plus a policies screenshot in <code>screenshots/</code>; commit <code>Phase 5: RLS policies</code>.</div>
+
+<h2>Phase 6 · Recommendation view and queries</h2>
+<pre>-- database/04_view.sql
+create view destination_scores with (security_invoker = on) as
+select d.*, c.name as category,
+       round(avg(r.rating),1) as avg_rating,
+       count(r.id) as review_count
+from destinations d
+left join categories c on c.id = d.category_id
+left join reviews r on r.destination_id = d.id
+group by d.id, c.name;
+
+grant select on destination_scores to anon, authenticated;
+select * from destination_scores order by avg_rating desc nulls last;</pre>
+<p><code>LEFT JOIN</code> keeps destinations with no reviews. This view is the recommendation engine: the website filters it and sorts by rating.</p>
+<h3>Part A: run and screenshot each</h3>
+<pre>-- database/05_queries.sql
+-- Q1 destinations with category (JOIN)
+select d.name, d.state, c.name as category from destinations d join categories c on c.id = d.category_id;
+-- Q2 destinations per category (GROUP BY)
+select c.name, count(d.id) from categories c left join destinations d on d.category_id = c.id group by c.name;
+-- Q3 low budget places for winter
+select name from destinations where budget = 'Low' and best_season = 'Winter';
+-- Q4 average rating at least 4.5 (HAVING)
+select d.name, round(avg(r.rating),1) from destinations d join reviews r on r.destination_id = d.id group by d.name having avg(r.rating) >= 4.5;
+-- Q5 destinations with no reviews (subquery)
+select name from destinations where id not in (select destination_id from reviews);
+-- Q6 longest ideal trip
+select name, ideal_days from destinations where ideal_days = (select max(ideal_days) from destinations);
+-- Q7 update a description
+update destinations set description = 'Tea estates, waterfalls and cool weather.' where name = 'Munnar';
+-- Q8 top 3 recommendations for Beach lovers
+select name, avg_rating from destination_scores where category = 'Beach' order by avg_rating desc nulls last limit 3;</pre>
+<h3>Part B: write your own (mandatory)</h3>
+<ol><li>All reviews with the destination name (JOIN).</li><li>Number of destinations per state.</li><li>Destinations whose name starts with a vowel (<code>LIKE</code>/regex).</li><li>Best destination for each budget level.</li><li>Delete one review, with before and after screenshots.</li></ol>
+<div class="card push"><b>PUSH 5.</b> Save <code>04_view.sql</code> and <code>05_queries.sql</code> plus screenshots; commit <code>Phase 6: view and queries</code>.</div>
+
+<h2>Phase 7 · API keys</h2>
+<p>Supabase → <b>Connect</b> (or Project Settings → API Keys). Copy the <b>Project URL</b> and the <b>Publishable (anon) key</b> into your notepad. Never use the <b>service_role/secret</b> key in the website; it bypasses RLS.</p>
+
+<h2>Phase 8 · Frontend</h2>
+<p>Create these four files at the top level of the repo folder (names are case-sensitive).</p>
+<h3>config.js</h3>
+<pre>const SUPABASE_URL = "https://YOUR-PROJECT-ID.supabase.co";
+const SUPABASE_KEY = "YOUR-PUBLISHABLE-OR-ANON-KEY";</pre>
+<h3>index.html (edit the footer)</h3>
+<pre>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;title&gt;TripMate&lt;/title&gt;&lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;&lt;body&gt;
+&lt;header&gt;&lt;h1&gt;🧭 TripMate&lt;/h1&gt;&lt;p&gt;Find your next destination&lt;/p&gt;&lt;/header&gt;
+&lt;section class="controls"&gt;
+  &lt;input id="search" placeholder="🔍 Search place or state"&gt;
+  &lt;select id="category"&gt;&lt;option value=""&gt;Any interest&lt;/option&gt;&lt;/select&gt;
+  &lt;select id="budget"&gt;&lt;option value=""&gt;Any budget&lt;/option&gt;&lt;option&gt;Low&lt;/option&gt;&lt;option&gt;Medium&lt;/option&gt;&lt;option&gt;High&lt;/option&gt;&lt;/select&gt;
+  &lt;select id="season"&gt;&lt;option value=""&gt;Any season&lt;/option&gt;&lt;option&gt;Winter&lt;/option&gt;&lt;option&gt;Summer&lt;/option&gt;&lt;option&gt;Monsoon&lt;/option&gt;&lt;/select&gt;
+&lt;/section&gt;
+&lt;p id="status"&gt;Loading...&lt;/p&gt;
+&lt;main id="grid" class="grid"&gt;&lt;/main&gt;
+&lt;dialog id="modal"&gt;
+  &lt;button id="close"&gt;✕&lt;/button&gt;
+  &lt;div id="detail"&gt;&lt;/div&gt;&lt;h3&gt;Reviews&lt;/h3&gt;&lt;div id="reviews"&gt;&lt;/div&gt;
+  &lt;h3&gt;Add your review&lt;/h3&gt;
+  &lt;form id="form"&gt;
+    &lt;input id="rname" placeholder="Your name" maxlength="50" required&gt;
+    &lt;select id="rrating" required&gt;&lt;option value=""&gt;Rating&lt;/option&gt;&lt;option&gt;5&lt;/option&gt;&lt;option&gt;4&lt;/option&gt;&lt;option&gt;3&lt;/option&gt;&lt;option&gt;2&lt;/option&gt;&lt;option&gt;1&lt;/option&gt;&lt;/select&gt;
+    &lt;textarea id="rcomment" placeholder="Comment" maxlength="500" required&gt;&lt;/textarea&gt;
+    &lt;button&gt;Submit&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/dialog&gt;
+&lt;footer&gt;Built by &lt;b&gt;YOUR NAME&lt;/b&gt; · Reg No: &lt;b&gt;REG NO&lt;/b&gt; · YOUR COLLEGE · Powered by Supabase&lt;/footer&gt;
+&lt;!-- order matters: library, keys, app --&gt;
+&lt;script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"&gt;&lt;/script&gt;
+&lt;script src="config.js"&gt;&lt;/script&gt;&lt;script src="app.js"&gt;&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;</pre>
+<h3>style.css</h3>
+<pre>*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",Arial,sans-serif;background:#0b1220;color:#eee}
+header{text-align:center;padding:28px 12px 8px}header h1{color:#06b6d4}
+.controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;padding:14px}
+input,select,textarea{padding:10px;border-radius:8px;border:1px solid #334;background:#141d2e;color:#fff}
+#status{text-align:center;color:#8a96a8;margin:6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;padding:0 20px 30px;max-width:1200px;margin:auto}
+.card{background:#141d2e;border-radius:10px;overflow:hidden;cursor:pointer;transition:.2s}
+.card:hover{transform:scale(1.03);box-shadow:0 8px 20px rgba(6,182,212,.3)}
+.card img{width:100%;height:150px;object-fit:cover}.card div{padding:10px}
+.card p{font-size:.85rem;color:#9aa6b8}.stars{color:#fbbf24!important}
+dialog{margin:auto;max-width:560px;width:92%;background:#141d2e;color:#eee;border:0;border-radius:12px;padding:20px}
+dialog::backdrop{background:rgba(0,0,0,.8)}
+#close{float:right;background:none;border:0;color:#fff;font-size:1.4rem;cursor:pointer}
+.review{background:#1e2a40;padding:8px 10px;border-radius:8px;margin:6px 0}
+#form{display:flex;flex-direction:column;gap:8px}
+#form button{padding:10px;border:0;border-radius:8px;background:#06b6d4;color:#000;font-weight:bold;cursor:pointer}
+footer{text-align:center;padding:18px;color:#8a96a8;font-size:.85rem;border-top:1px solid #223}</pre>
+<h3>app.js</h3>
+<pre>const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const $ = (id) => document.getElementById(id);
+let places = [], currentId = null;
+
+function esc(t) {  // blocks HTML/JS injection
+  return String(t ?? "").replace(/&/g,"&amp;amp;").replace(/&lt;/g,"&amp;lt;").replace(/&gt;/g,"&amp;gt;").replace(/"/g,"&amp;quot;").replace(/'/g,"&amp;#39;");
+}
+
+async function loadCategories() {            // SELECT id, name FROM categories
+  const { data, error } = await db.from("categories").select("id, name").order("name");
+  if (error) return ($("status").textContent = "Error: " + error.message);
+  data.forEach((c) => $("category").add(new Option(c.name, c.id)));
+}
+
+async function loadPlaces() {                // recommendation query
+  $("status").textContent = "Loading...";
+  let q = db.from("destination_scores").select("*")
+    .order("avg_rating", { ascending: false, nullsFirst: false })
+    .order("review_count", { ascending: false });
+  if ($("search").value.trim()) {
+    const s = $("search").value.trim();
+    q = q.or(`name.ilike.%${s}%,state.ilike.%${s}%`);
+  }
+  if ($("category").value) q = q.eq("category_id", $("category").value);
+  if ($("budget").value)   q = q.eq("budget", $("budget").value);
+  if ($("season").value)   q = q.eq("best_season", $("season").value);
+  const { data, error } = await q;
+  if (error) return ($("status").textContent = "Error: " + error.message);
+  places = data;
+  $("status").textContent = data.length ? data.length + " recommendation(s), best rated first" : "No match. Try other filters 😕";
+  $("grid").innerHTML = data.map((p) => `
+    &lt;div class="card" data-id="${p.id}"&gt;
+      &lt;img src="${esc(p.image_url)}" alt="${esc(p.name)}"&gt;
+      &lt;div&gt;&lt;h3&gt;${esc(p.name)}&lt;/h3&gt;
+      &lt;p&gt;${esc(p.state)} · ${esc(p.category)} · ${esc(p.budget)} budget&lt;/p&gt;
+      &lt;p class="stars"&gt;${p.avg_rating ? "⭐ " + p.avg_rating + " (" + p.review_count + ")" : "No ratings yet"}&lt;/p&gt;&lt;/div&gt;
+    &lt;/div&gt;`).join("");
+  document.querySelectorAll(".card").forEach((c) => c.onclick = () => openPlace(Number(c.dataset.id)));
+}
+
+async function openPlace(id) {
+  const p = places.find((x) => x.id === id); currentId = id;
+  $("detail").innerHTML = `&lt;h2&gt;${esc(p.name)}&lt;/h2&gt;
+    &lt;p&gt;${esc(p.state)} · Best in ${esc(p.best_season)} · ${p.ideal_days} days&lt;/p&gt;&lt;p&gt;${esc(p.description)}&lt;/p&gt;`;
+  $("modal").showModal();
+  loadReviews(id);
+}
+
+async function loadReviews(id) {             // SELECT ... FROM reviews WHERE destination_id = ?
+  const { data, error } = await db.from("reviews").select("reviewer_name, rating, comment")
+    .eq("destination_id", id).order("created_at", { ascending: false });
+  $("reviews").innerHTML = error ? esc(error.message) : data.length
+    ? data.map((r) => `&lt;div class="review"&gt;${"⭐".repeat(r.rating)} ${esc(r.reviewer_name)}&lt;p&gt;${esc(r.comment)}&lt;/p&gt;&lt;/div&gt;`).join("")
+    : "No reviews yet.";
+}
+
+$("form").addEventListener("submit", async (e) => {   // INSERT INTO reviews
+  e.preventDefault();
+  const { error } = await db.from("reviews").insert({
+    destination_id: currentId, reviewer_name: $("rname").value.trim(),
+    rating: Number($("rrating").value), comment: $("rcomment").value.trim() });
+  if (error) return alert("Could not save: " + error.message);
+  $("form").reset(); await loadReviews(currentId); await loadPlaces();
+});
+
+$("close").onclick = () => $("modal").close();
+let t; $("search").oninput = () => { clearTimeout(t); t = setTimeout(loadPlaces, 300); };
+["category", "budget", "season"].forEach((id) => $(id).onchange = loadPlaces);
+loadCategories().then(loadPlaces);</pre>
+<table><tr><th>JavaScript</th><th>SQL</th></tr><tr><td><code>.select("*")</code> on the view</td><td><code>SELECT * FROM destination_scores</code></td></tr><tr><td><code>.eq("budget","Low")</code></td><td><code>WHERE budget = 'Low'</code></td></tr><tr><td><code>.order("avg_rating",{ascending:false})</code></td><td><code>ORDER BY avg_rating DESC</code></td></tr><tr><td><code>.ilike("name","%go%")</code></td><td><code>WHERE name ILIKE '%go%'</code></td></tr><tr><td><code>.insert({...})</code></td><td><code>INSERT INTO reviews ...</code></td></tr></table>
+
+<h2>Phase 9 · Test locally</h2>
+<p>Right-click <code>index.html</code> → <b>Open with Live Server</b>. Check: 10 destinations load; picking Beach + Medium + Winter returns Alleppey and Goa; the popup shows reviews; a new review appears at once and in Supabase → Table Editor → reviews. If something breaks, press F12 → Console and read the red error.</p>
+<div class="card push"><b>PUSH 6.</b> Confirm all four files are at the repo top level, then commit <code>Phase 8: frontend</code>.</div>
+
+<h2>Phase 10 · Deploy on GitHub Pages</h2>
+<p>Repo → <b>Settings → Pages</b> → Source <b>Deploy from a branch</b> → branch <code>main</code>, folder <code>/ (root)</code> → Save. After 1 to 3 minutes your link is <code>https://YOUR-USERNAME.github.io/tourism-YOUR-REGNO/</code>. Open it on your phone and submit one review.</p>
+
+<h2>Phase 11 · README</h2>
+<p>Replace README.md with: project title, <b>Live Demo link</b>, your name and reg no, tech stack, table list (with foreign keys), the <code>destination_scores</code> view, features, and a "My Personalisation" section.</p>
+<div class="card push"><b>PUSH 7.</b> Commit <code>Phase 11: README and live link</code>.</div>
+
+<h2>Phase 12 · Personalise (mandatory)</h2>
+<ol><li><b>Add 5 destinations</b> of your own with at least one new category (for example Romantic, Food or Pilgrimage).</li>
+<li><b>Add a column</b> in the database and show it on the site, e.g. <code>alter table destinations add column entry_fee int;</code> (also add it to the view, or query the table).</li>
+<li><b>Add a feature:</b> Easy: sort by Newest or Shortest trip. Medium: "Top 5 recommended" strip, or a <code>wishlist</code> table with Add button. Hard: Supabase Auth so only logged-in users can review, or a "trip days" filter.</li>
+<li><b>Change the theme colour</b> <code>#06b6d4</code>.</li></ol>
+<div class="card warn">New tables need RLS, policies and grants like Phase 5, otherwise you get <code>permission denied</code>. If you change the view, drop and recreate it, then re-grant select.</div>
+<div class="card push"><b>PUSH 8.</b> Save <code>database/06_personalisation.sql</code>, updated frontend, screenshots and README; commit <code>Phase 12: personalisation</code>.</div>
+
+<h2>Submission and marks (25)</h2>
+<ul><li>Live link, repo link, all 8 commits, SQL files in <code>database/</code>, screenshots, ER diagram with your new column, filled README.</li></ul>
+<table><tr><th>Component</th><th>Marks</th></tr><tr><td>Schema: PK, FK, constraints</td><td>4</td></tr><tr><td>Sample data + own 5 destinations</td><td>3</td></tr><tr><td>RLS policies + grants</td><td>3</td></tr><tr><td>Queries Part A + B with outputs</td><td>5</td></tr><tr><td>Live site: recommend, search, filter, review</td><td>4</td></tr><tr><td>Personalisation: column + feature</td><td>4</td></tr><tr><td>8 commits, README, ER diagram</td><td>2</td></tr></table>
+
+<h2>Troubleshooting</h2>
+<table><tr><th>Problem</th><th>Fix</th></tr>
+<tr><td>Stuck on "Loading..."</td><td>F12 → Console; read the red error</td></tr>
+<tr><td><code>supabase is not defined</code></td><td>Supabase script must come before config.js and app.js</td></tr>
+<tr><td>Invalid API key / 401</td><td>Re-copy the publishable key, no spaces or quotes</td></tr>
+<tr><td>Failed to fetch</td><td>Check URL; restore paused project</td></tr>
+<tr><td>0 results but data exists</td><td>Re-run Script 3 (policy or grant missing)</td></tr>
+<tr><td><code>relation "destination_scores" does not exist</code></td><td>Run Script 4</td></tr>
+<tr><td>Duplicate key / subquery returns more than one row</td><td>Script 2 was run twice; run the reset below, then Scripts 1 to 4 once each</td></tr>
+<tr><td><code>not a git repository</code></td><td>Open the repo folder in VS Code, then a new terminal</td></tr>
+<tr><td><code>Please tell me who you are</code></td><td>Run the two <code>git config</code> lines from 0.5</td></tr>
+<tr><td><code>rejected (fetch first)</code></td><td>Run <code>git pull</code>, then <code>git push</code></td></tr>
+<tr><td>Pages shows 404 / old version</td><td>Files must be at repo root; wait 3 minutes; Ctrl+Shift+R</td></tr></table>
+<pre>-- reset (do not save in repo)
+drop view if exists destination_scores;
+drop table if exists reviews, destinations, categories cascade;</pre>
+
+<h2>Viva questions</h2>
+<ol><li>Primary key vs foreign key in your schema.</li><li>What happens to reviews when a destination is deleted?</li><li>Why does the view use LEFT JOIN?</li><li>WHERE vs HAVING.</li><li>What is Row Level Security, and what if it is off?</li><li>Why is the anon key safe in the browser but service_role is not?</li><li>View vs table.</li><li>What happens if you insert rating 6?</li><li>Convert <code>db.from("destinations").select("*").eq("budget","Low")</code> to SQL.</li><li>Which normal form is your schema in?</li><li>One example each of DDL, DML, DCL.</li><li>Explain how the recommendation ranking works.</li><li>Trace a review from the form to the database row.</li></ol>
+<footer style="text-align:center;color:var(--mut);margin:40px 0 20px">DBMS · TripMate Compulsory Weekend Task</footer>
+</main>
+<script>document.querySelectorAll('pre').forEach(p=>{var b=document.createElement('button');b.textContent='Copy';b.onclick=function(){navigator.clipboard.writeText(p.innerText.replace(/^Copy/,'')).then(function(){b.textContent='Copied'})};p.prepend(b)})</script>
+</body></html>
